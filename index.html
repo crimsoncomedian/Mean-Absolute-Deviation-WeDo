@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Practice mean absolute deviation with randomly generated data, guided calculation tables, optional demonstrations, and step review.">
+  <title>Mean Absolute Deviation Practice</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; padding: 16px; background: light-dark(#ffffff, #181818); font-family: system-ui, sans-serif; }
+    .cursor-interaction { cursor: pointer; }
+
+#mad-practice{--mad-ink:light-dark(#182a37,#e8f0f3);--mad-sub:light-dark(#526675,#afbdc6);--mad-line:light-dark(#d3dfe4,#40515e);--mad-tile:light-dark(#f0f5f7,#233641);--mad-accent:light-dark(#126b69,#76d3c9);--mad-soft:light-dark(#e4f3ef,#193d3b);--mad-button:light-dark(#176864,#82d9cd);--mad-button-text:light-dark(#ffffff,#102a28);--mad-error:light-dark(#a3342f,#ffaaa1);font-family:system-ui,sans-serif;color:var(--mad-ink);max-width:760px;margin:auto;padding:16px 0 24px}
+#mad-practice *{box-sizing:border-box}#mad-practice [hidden]{display:none!important}
+#mad-practice header{padding-right:90px}#mad-practice h2{font-size:24px;font-weight:500;margin:0}#mad-practice h3{font-size:18px;font-weight:500;margin:0 0 8px}
+#mad-practice p{margin:0;line-height:1.5}#mad-practice .mad-prompt{margin:26px 0 20px}#mad-direction,#mad-hint,#mad-calculation,#mad-meaning{color:var(--mad-sub)}
+#mad-values{margin:20px 0 26px;font-size:24px;font-weight:500;line-height:1.6;font-variant-numeric:tabular-nums}
+#mad-mean{font-size:15px;font-weight:500;color:var(--mad-accent);margin:0 0 12px!important}
+#mad-table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:20px;font-variant-numeric:tabular-nums}
+#mad-table th,#mad-table td{text-align:center;padding:8px 10px;border-bottom:1px solid var(--mad-line);font-size:16px;overflow-wrap:anywhere}
+#mad-table th{font-size:14px;font-weight:500;padding-top:10px;padding-bottom:12px;color:var(--mad-sub)}
+#mad-table th:first-child{width:22%}#mad-table td{height:52px}
+#mad-practice .mad-cell{display:flex;align-items:center;justify-content:center;gap:6px}
+#mad-practice input{font:400 17px system-ui,sans-serif;border:1px solid var(--mad-line);border-radius:8px;background:transparent;color:var(--mad-ink);padding:9px 10px;min-width:0;max-width:100%;font-variant-numeric:tabular-nums}
+#mad-practice .mad-cell input{width:100px;text-align:center}#mad-practice .mad-cell .mad-mark{width:16px;flex-shrink:0;color:var(--mad-sub);font-size:14px}
+#mad-practice .mad-cell.valid input{border-color:var(--mad-accent);background:var(--mad-soft)}#mad-practice .mad-cell.valid .mad-mark{color:var(--mad-accent)}
+#mad-practice .mad-cell.invalid input{border-color:var(--mad-error)}#mad-practice .mad-cell.invalid .mad-mark{color:var(--mad-error)}
+#mad-entry{margin:18px 0 10px}#mad-label{display:block;font-size:14px;font-weight:500;margin-bottom:8px}#mad-answer{width:170px}
+#mad-hint{font-size:13px;margin-top:8px!important}#mad-message{min-height:24px;margin:12px 0!important;font-size:14px;color:var(--mad-error)}#mad-message.success{color:var(--mad-accent)}
+#mad-actions,#mad-review{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#mad-practice button{font:500 14px system-ui,sans-serif;padding:12px 17px;border-radius:8px}
+#mad-practice .mad-primary{border:1px solid transparent;background:var(--mad-button);color:var(--mad-button-text)}#mad-practice .mad-secondary{border:1px solid var(--mad-line);background:transparent;color:var(--mad-ink)}
+#mad-practice button:disabled{opacity:.45;cursor:default}#mad-practice button:focus-visible,#mad-practice input:focus-visible{outline:3px solid var(--mad-accent);outline-offset:3px}
+#mad-review{margin-top:20px}#mad-review span{color:var(--mad-sub);font-size:13px}#mad-next{margin-top:20px}#mad-worked{margin-top:12px}#mad-meaning{margin-top:8px!important}
+#mad-practice .mad-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:480px){#mad-practice header{padding-right:0}#mad-values{font-size:20px}#mad-table th,#mad-table td{padding-left:4px;padding-right:4px}#mad-practice .mad-cell{gap:3px}#mad-practice .mad-cell input{width:72px;padding:9px 4px}}
+
+  </style>
+</head>
+<body>
+<main>
+<div id="mad-practice">
+  <header><h2>Mean absolute deviation</h2></header>
+  <div class="mad-prompt" aria-live="polite"><h3 id="mad-title"></h3><p id="mad-direction"></p></div>
+  <div id="mad-values" role="group" aria-label="Data values"></div>
+  <p id="mad-mean" hidden></p>
+  <table id="mad-table" hidden>
+    <caption class="mad-sr">Differences from the mean and their absolute values</caption>
+    <thead><tr><th scope="col">Value</th><th scope="col" id="mad-difference-heading">Value − mean</th><th scope="col" id="mad-absolute-heading" hidden>Absolute value</th></tr></thead>
+    <tbody id="mad-rows"></tbody>
+  </table>
+  <div id="mad-entry" role="group" aria-label="Your calculation">
+    <label id="mad-label" for="mad-answer"></label>
+    <input id="mad-answer" type="text" inputmode="decimal" autocomplete="off" placeholder="Your answer" aria-describedby="mad-hint mad-message">
+  </div>
+  <p id="mad-hint"></p>
+  <p id="mad-message" role="status" aria-live="polite"></p>
+  <div id="mad-actions">
+    <button id="mad-check" class="mad-primary cursor-interaction" type="button">Check answer</button>
+    <button id="mad-skip" class="mad-secondary cursor-interaction" type="button">Skip step</button>
+  </div>
+  <div id="mad-worked" hidden aria-live="polite"><h3 id="mad-result"></h3><p id="mad-calculation"></p><p id="mad-meaning"></p></div>
+  <div id="mad-review" hidden role="group" aria-label="Review the solution steps">
+    <span>Review steps</span>
+    <button id="mad-back" class="mad-secondary cursor-interaction" type="button">← Back</button>
+    <button id="mad-forward" class="mad-secondary cursor-interaction" type="button">Forward →</button>
+  </div>
+  <button id="mad-next" hidden class="mad-primary cursor-interaction" type="button">Try another set →</button>
+</div>
+</main>
+<script>
+(()=>{
+const root=document.getElementById('mad-practice'),q=s=>root.querySelector(s);
+const entry=q('#mad-answer'),message=q('#mad-message');
+let values=[],mean=0,differences=[],absolute=[],mad=0,sum=0,totalDistance=0,step=0,finished=false,busy=false,bag=[];
+let differenceAnswers=[],absoluteAnswers=[],differenceValid=[],absoluteValid=[];
+const randomInt=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=randomInt(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const reduced=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const pause=ms=>new Promise(resolve=>setTimeout(resolve,reduced()?0:ms));
+const format=n=>String(Number(n.toFixed(2)));
+function parseNumber(raw){
+ const text=raw.trim().replace(/−/g,'-');
+ if(!text)return NaN;
+ if(/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text))return Number(text);
+ const fraction=text.match(/^([+-]?\d+)\s*\/\s*([+-]?\d+)$/);
+ return fraction&&Number(fraction[2])!==0?Number(fraction[1])/Number(fraction[2]):NaN;
+}
+function generateValues(){
+ if(!bag.length)bag=shuffle([5,6,7]);
+ const n=bag.pop(),width=randomInt(20,30),low=randomInt(0,100-width),high=low+width;
+ const result=Array.from({length:n},()=>randomInt(low,high));
+ // Keep the first mean exact and whole, so no intermediate rounding is needed.
+ const remainder=result.reduce((a,b)=>a+b,0)%n;
+ if(remainder){
+  const down=result.findIndex(v=>v-remainder>=low);
+  if(down!==-1)result[down]-=remainder;
+  else{const up=result.findIndex(v=>v+n-remainder<=high);result[up]+=n-remainder;}
+ }
+ if(result.every(v=>v===result[0])){
+  if(result[0]>low&&result[0]<high){result[0]--;result[1]++;}
+  else if(result[0]===low)result[0]+=n;
+  else result[0]-=n;
+ }
+ return shuffle(result);
+}
+function fresh(){
+ if(busy)return;
+ values=generateValues();sum=values.reduce((a,b)=>a+b,0);mean=sum/values.length;
+ differences=values.map(v=>v-mean);absolute=differences.map(Math.abs);totalDistance=absolute.reduce((a,b)=>a+b,0);mad=totalDistance/values.length;
+ step=0;finished=false;differenceAnswers=values.map(()=>'');absoluteAnswers=values.map(()=>'');differenceValid=values.map(()=>false);absoluteValid=values.map(()=>false);
+ clearMessage();render();
+}
+function clearMessage(){message.textContent='';message.classList.remove('success');entry.removeAttribute('aria-invalid');}
+function syncControls(){
+ q('#mad-check').disabled=busy;q('#mad-skip').disabled=busy;q('#mad-next').disabled=busy;
+ q('#mad-back').disabled=busy||step===0;q('#mad-forward').disabled=busy||step===3;
+ root.querySelectorAll('input').forEach(input=>input.disabled=busy);
+}
+function render(){
+ const titles=['Find the mean.','Find each difference from the mean.','Find the absolute values.','Find the mean of the absolute values.'];
+ const prompts=[`Add the ${values.length} numbers, then divide by ${values.length}.`,`Subtract ${mean} from each value. Keep the negative signs.`,`Take the absolute value of each difference. This is its distance from the mean.`,`Add the absolute values, then divide by ${values.length}.`];
+ q('#mad-title').textContent=finished&&step===3?'You found the mean absolute deviation.':titles[step];
+ q('#mad-direction').textContent=prompts[step];
+ q('#mad-values').hidden=step!==0;q('#mad-values').textContent=values.join(', ');
+ q('#mad-mean').hidden=step===0;q('#mad-mean').textContent='Mean = '+mean;
+ q('#mad-table').hidden=step===0;q('#mad-absolute-heading').hidden=step<2;
+ q('#mad-difference-heading').textContent='Value − '+mean;
+ q('#mad-rows').replaceChildren();
+ if(step>0)values.forEach((v,i)=>{
+  const row=document.createElement('tr');const valueCell=document.createElement('td');valueCell.textContent=v;row.append(valueCell);
+  row.append(makeCell(i,'difference',step===1&&!finished));
+  if(step>=2)row.append(makeCell(i,'absolute',step===2&&!finished));
+  q('#mad-rows').append(row);
+ });
+ const single=(step===0||step===3)&&!finished;
+ q('#mad-entry').hidden=!single;entry.value='';entry.removeAttribute('aria-invalid');
+ q('#mad-label').textContent=step===0?'Mean':'Mean absolute deviation';
+ q('#mad-hint').textContent=finished?'':step===3?'Round to two decimal places if needed. You may also enter a fraction.':step===1?'A value below the mean has a negative difference.':step===2?'Distances are never negative.':'';
+ q('#mad-actions').hidden=finished;
+ q('#mad-check').textContent=step===1?'Check differences':step===2?'Check absolute values':'Check answer';
+ q('#mad-worked').hidden=!finished||(step!==0&&step!==3);
+ if(finished&&step===0){q('#mad-result').textContent='Mean = '+mean;q('#mad-calculation').textContent=values.join(' + ')+' = '+sum+'; '+sum+' ÷ '+values.length+' = '+mean;q('#mad-meaning').textContent='';}
+ if(finished&&step===3){
+  const exact=(totalDistance*100)%values.length===0;
+  q('#mad-result').textContent='Mean absolute deviation '+(exact?'= ':'≈ ')+format(mad);
+  q('#mad-calculation').textContent=absolute.join(' + ')+' = '+totalDistance+'; '+totalDistance+' ÷ '+values.length+' '+(exact?'= ':'≈ ')+format(mad);
+  q('#mad-meaning').textContent='The values are, on average, '+(exact?'':'about ')+format(mad)+' units away from the mean of '+mean+'.';
+ }
+ q('#mad-review').hidden=!finished;q('#mad-next').hidden=!finished;syncControls();
+}
+function makeCell(i,kind,editable){
+ const td=document.createElement('td'),actual=kind==='difference'?differences:absolute;
+ if(!editable){td.textContent=actual[i];return td;}
+ const answers=kind==='difference'?differenceAnswers:absoluteAnswers,valid=kind==='difference'?differenceValid:absoluteValid;
+ const wrap=document.createElement('div');wrap.className='mad-cell'+(valid[i]?' valid':'');
+ const input=document.createElement('input');input.type='text';input.inputMode=kind==='difference'?'text':'decimal';input.autocomplete='off';input.dataset.kind=kind;input.dataset.index=i;input.value=answers[i];input.readOnly=valid[i];
+ input.setAttribute('aria-label',(kind==='difference'?'Difference':'Absolute value')+' for '+values[i]+', row '+(i+1));
+ input.setAttribute('aria-describedby','mad-message');
+ const mark=document.createElement('span');mark.className='mad-mark';mark.textContent=valid[i]?'✓':'';mark.setAttribute('aria-hidden','true');
+ input.addEventListener('input',()=>{answers[i]=input.value;wrap.classList.remove('invalid');input.removeAttribute('aria-invalid');mark.textContent='';});
+ input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+ wrap.append(input,mark);td.append(wrap);return td;
+}
+function markRow(input,correct){
+ const wrap=input.parentElement;wrap.classList.toggle('valid',correct);wrap.classList.toggle('invalid',!correct);
+ input.setAttribute('aria-invalid',String(!correct));input.readOnly=correct;wrap.querySelector('.mad-mark').textContent=correct?'✓':'!';
+}
+async function advance(){
+ await pause(450);
+ if(step===3){finished=true;}else step++;
+ clearMessage();busy=false;render();
+ if(finished)q('#mad-back').focus({preventScroll:true});else focusEntry();
+}
+function focusEntry(){const target=root.querySelector('#mad-entry:not([hidden]) input')||root.querySelector('#mad-rows input:not([readonly])');if(target)target.focus({preventScroll:true});}
+async function check(){
+ if(busy||finished)return;clearMessage();
+ if(step===0||step===3){
+  const value=parseNumber(entry.value),expected=step===0?mean:mad;
+  const correct=Number.isFinite(value)&&(Math.abs(value-expected)<1e-9||(step===3&&Math.abs(value-Number(expected.toFixed(2)))<1e-9));
+  if(!correct){
+   message.textContent=!Number.isFinite(value)?'Enter a number'+(step===3?' or a fraction.':'.'):step===0?'Not quite. Add all '+values.length+' values, then divide by '+values.length+'.':'Not quite. Add the absolute values and divide by '+values.length+'. Round only your final answer.';
+   entry.setAttribute('aria-invalid','true');entry.focus();entry.select();return;
+  }
+  message.textContent=step===0?'Correct · Mean = '+mean+'.':'Correct · Mean absolute deviation '+(((totalDistance*100)%values.length===0)?'= ':'≈ ')+format(mad)+'.';
+ }else{
+  const kind=step===1?'difference':'absolute',actual=step===1?differences:absolute,answers=step===1?differenceAnswers:absoluteAnswers,valid=step===1?differenceValid:absoluteValid;
+  let firstWrong=null;
+  root.querySelectorAll('#mad-rows input').forEach(input=>{const i=Number(input.dataset.index);answers[i]=input.value;const value=parseNumber(input.value);valid[i]=Number.isFinite(value)&&value===actual[i];markRow(input,valid[i]);if(!valid[i]&&!firstWrong)firstWrong=input;});
+  if(firstWrong){message.textContent=step===1?'Check the marked entries. Use value minus mean; keep negative signs.':'Check the marked entries. Absolute values are distances, so they cannot be negative.';firstWrong.focus();return;}
+  message.textContent=step===1?'All differences are correct.':'All absolute values are correct.';
+ }
+ message.classList.add('success');busy=true;syncControls();await advance();
+}
+q('#mad-check').addEventListener('click',check);
+entry.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check();}});
+q('#mad-skip').addEventListener('click',async()=>{
+ if(busy||finished)return;clearMessage();busy=true;syncControls();
+ if(step===0||step===3){entry.value=step===0?String(mean):format(mad);message.textContent=step===0?sum+' ÷ '+values.length+' = '+mean:totalDistance+' ÷ '+values.length+' '+(((totalDistance*100)%values.length===0)?'= ':'≈ ')+format(mad);message.classList.add('success');}
+ else{
+  const actual=step===1?differences:absolute,answers=step===1?differenceAnswers:absoluteAnswers,valid=step===1?differenceValid:absoluteValid;
+  for(const input of root.querySelectorAll('#mad-rows input')){const i=Number(input.dataset.index);input.value=String(actual[i]);answers[i]=input.value;valid[i]=true;markRow(input,true);await pause(140);}
+ }
+ await advance();
+});
+function review(delta){if(!finished||busy)return;const next=step+delta;if(next<0||next>3)return;step=next;clearMessage();render();}
+q('#mad-back').addEventListener('click',()=>review(-1));q('#mad-forward').addEventListener('click',()=>review(1));
+q('#mad-next').addEventListener('click',()=>{fresh();focusEntry();});
+fresh();
+})();
+</script>
+</body>
+</html>
